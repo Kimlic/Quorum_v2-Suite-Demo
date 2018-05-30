@@ -130,7 +130,6 @@ function createNode() {
         nodeAccountAddress="0x"${BASH_REMATCH[1]};
     fi
 
-    touch accountAddress.txt
     createGenesis
 
     mv ${pName}/datadir/keystore/* ${pName}/${nodeName}/qdata/keystore/${nodeName}key
@@ -147,50 +146,40 @@ function createGenesis() {
     echo "NODE ADDRESS: "
     echo $nodeAccountAddress
 
-    if [ $max == 1 ]; then
-    	echo "{" > tempAccountAddress.txt
-    	echo ""'"alloc"'": {"  >> tempAccountAddress.txt
-        echo '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
-    	echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
-    	echo "}}," >> tempAccountAddress.txt
-        cat tempAccountAddress.txt > accountAddress.txt
-	else
 		if [ $i == 0 ]; then
-			echo "{" > tempAccountAddress.txt
+			echo "{" >> tempAccountAddress.txt
             echo ""'"alloc"'": {"  >> tempAccountAddress.txt
 			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
 			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
 			echo "}," >> tempAccountAddress.txt
+            cat tempAccountAddress.txt >> accountAddress.txt 
 		elif [ $i -lt $max ] ;then
 			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
 			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
-			echo "}," >> tempAccountAddress.txt
-		fi
+            echo "}," >> tempAccountAddress.txt
 
-		sed '$ s/.$/},/' tempAccountAddress.txt > accountAddress.txt          
-	fi 
+            if [ $i == `expr $max - 1` ]; then
+                sed '$ s/.$/},/' tempAccountAddress.txt >> accountAddress.txt 
+            else
+                cat tempAccountAddress.txt >> accountAddress.txt 
+            fi
+		fi         
 
     rm tempAccountAddress.txt
 }
 
 function cleanup() {
     echo "CLEANUP"
+    rm -rf ${pName}/datadir
+    rm -rf ${pName}/keys
+    rm -rf ${pName}/setup
+    rm accountAddress.txt
 }
-#     rm -rf ${pName}/datadir
-#     rm -rf ${pName}/keys
-#     rm -rf ${pName}/setup
-#     rm accountAddress.txt
-#     rm AccountAddress.txt
-#     rm enode.txt
-#     rm nodekey
-#     rm Enode.txt
-#     rm Address.txt
-# }
 
 function generateEnode() {
     echo ""
     echo "Generating Enodes...." 
-    touch enode.txt
+
     i=0
     j=0
 
@@ -198,13 +187,13 @@ function generateEnode() {
     do
         bootnode -genkey nodekey
     	nodekey=$(cat nodekey)
-    	bootnode -nodekey nodekey 2>enode.txt &
+    	bootnode -nodekey nodekey 2>bootnode.txt &
     	pid=$!
     	sleep 5
     	kill -9 $pid
     	wait $pid 2> /dev/null
     	re="enode:.*@"
-    	enode=$(cat enode.txt)
+    	enode=$(cat bootnode.txt)
     
         if [[ $enode =~ $re ]];then
             Enode=${BASH_REMATCH[0]};
@@ -245,10 +234,16 @@ function generateEnode() {
     while [ $i -lt $max ]
     do
         nodeName=${nodes[i]}
+        touch Address.txt
         sed '$ s/.$/]/' Enode.txt > Address.txt
         cat Address.txt > ${pName}/${nodeName}/qdata/static-nodes.json
+        rm Address.txt
         true $(( i++ ))
     done
+
+    rm Enode.txt
+    rm nodekey
+    rm bootnode.txt
 }
 
 function displayPublicAddress() {
@@ -289,6 +284,8 @@ function main() {
     
     read -p $'\e[1;32mPlease enter a node count: \e[0m' count
     max=$count
+
+    touch accountAddress.txt
 
     while [ $i -lt $max ]
     do

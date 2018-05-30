@@ -5,7 +5,7 @@ sleep 5
 CORE_NODE_IP="$(dig +short $CORE_NODE_IP)"
 CORE_MASTERNODE_IP="$(dig +short $CORE_MASTERNODE_IP)"
 
-GLOBAL_ARGS="--raft --nodiscover --networkid 10 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints"
+GLOBAL_ARGS="--raft --nodiscover --networkid 20 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints"
 
 cp qdata/#nodeName#.conf .
 
