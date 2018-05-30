@@ -50,3 +50,25 @@ The response should be:
 ```
 
 ![Up and running!](/Images/img6.png "Up and running!")
+
+# How to prepare Quorum for redeploy
+
+1. Type `docker ps` in terminal to find quorum-related containers.
+
+![Find docker containers](/Images/img7.png "Quorum containers")
+
+2. Stop them by sending their Container IDs to `docker stop`
+```
+docker stop e5f473235a6f e79e7e1bf367 7b90a7b87bd2
+```
+
+3. Remove containers by sending same IDs to `docker rm`
+```
+docker rm e5f473235a6f e79e7e1bf367 7b90a7b87bd2
+```
+
+4. Delete kimlic directory from Quorum directory, so there is only lib directory and setup.sh are left
+
+![Before removal](/Images/img8.png "Before removal")
+
+![After removal](/Images/img9.png "After removal")
