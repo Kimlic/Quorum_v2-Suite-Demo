@@ -1,9 +1,7 @@
 #!/bin/bash
 username=$(whoami)
 
-
-function copyConfTemplate(){
-    
+function copyConfTemplate() {
     PATTERN="s/#nodeName#/${nodeName}/g"
     nodeName1=${nodes[0]}
     PATTERN2="s/#nodeName1#/${nodeName1}/g"
@@ -13,23 +11,17 @@ function copyConfTemplate(){
     cp ${pName}/setup/${nodeName}.conf ${pName}/${nodeName}/qdata/${nodeName}.conf
 }
 
-
-function createRaftDockerComposeFile(){
-    
+function createRaftDockerComposeFile() {
     j=0
-
     tmpPort=$pPort
     
     if [ -z "$tmpPort" ]; then
-
         tmpPort="22000"
-
     fi
 
     cat lib/common.yml > ${pName}/docker-compose.yml
     
     while : ; do
-        
         nodeName=${nodes[j]}
         nodeName1=${nodes[0]}
     
@@ -59,34 +51,24 @@ function createRaftDockerComposeFile(){
             break;
         fi
     done
-    
 }
 
-
-
-function copyRaftStartTemplate(){
-
+function copyRaftStartTemplate() {
     PATTERN="s/#nodeName#/${nodeName}/g"
     sed $PATTERN lib/start_raft.sh > ${pName}/setup/start_raft_${nodeName}.sh
     sed -i "$PATTERN2" ${pName}/setup/start_raft_${nodeName}.sh
 
     cp ${pName}/setup/start_raft_${nodeName}.sh ${pName}/${nodeName}/start_node.sh
-
     chmod +x ${pName}/${nodeName}/start_node.sh
-
     cp ${pName}/${nodeName}/start_node.sh ${pName}/${nodeName}/qdata/start_raft_node.sh
-    
 }
 
-function executeInit(){
-
+function executeInit() {
     cp lib/reset_chain.sh ${pName}
-
     chmod +x ${pName}/reset_chain.sh
-
     j=0
-    while : ; do
-        
+
+    while : ; do    
         nodeName=${nodes[j]}
         cd ${pName}
 
@@ -117,13 +99,10 @@ function executeInit(){
         if [ $i -eq $j ]; then
             break;
         fi
-
     done
-
 }
 
-function generateKeyPair(){
-
+function generateKeyPair() {
     echo "Generating public and private keys for " ${nodeName}", Please enter password or leave blank"
     constellation-node --generatekeys=${nodeName}
 
@@ -131,16 +110,15 @@ function generateKeyPair(){
     constellation-node --generatekeys=${nodeName}a
 
     mv ${nodeName}*.* ${pName}/keys
-
 }
 
-function createNode(){
-
+function createNode() {
     nodeName=$1
     mkdir -p $pName/$nodeName
     mkdir -p $pName/${nodeName}/qdata
     mkdir -p $pName/${nodeName}/qdata/{keystore,geth,logs}
     mkdir -p $pName/${nodeName}/keys
+    touch $pName/${nodeName}/passwords
    
     generateKeyPair
     copyConfTemplate
@@ -149,10 +127,10 @@ function createNode(){
     re="\{([^}]+)\}"
 
     if [[ $nodeAccountAddress =~ $re ]]; then
-
         nodeAccountAddress="0x"${BASH_REMATCH[1]};
     fi
 
+    touch accountAddress.txt
     createGenesis
 
     mv ${pName}/datadir/keystore/* ${pName}/${nodeName}/qdata/keystore/${nodeName}key
@@ -161,76 +139,75 @@ function createNode(){
     cat lib/genesis.json >> ${pName}/genesis.json
 
     copyRaftStartTemplate 
-    
 }
 
-function createGenesis(){
+function createGenesis() {
+    touch tempAccountAddress.txt
 
-        if [ $max == 1 ]; then
+    echo "NODE ADDRESS: "
+    echo $nodeAccountAddress
 
-		echo "{" >AccountAddress.txt
-		echo ""'"alloc"'": {"  >>AccountAddress.txt
-                echo '"'$nodeAccountAddress'": {' >>AccountAddress.txt
-	        echo '"balance": "1000000000000000000000000000"' >>AccountAddress.txt
-		echo "}}," >>AccountAddress.txt
-                cat AccountAddress.txt  >accountAddress.txt
-
+    if [ $max == 1 ]; then
+    	echo "{" > tempAccountAddress.txt
+    	echo ""'"alloc"'": {"  >> tempAccountAddress.txt
+        echo '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
+    	echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
+    	echo "}}," >> tempAccountAddress.txt
+        cat tempAccountAddress.txt > accountAddress.txt
 	else
 		if [ $i == 0 ]; then
-			echo "{" >AccountAddress.txt
-		        echo ""'"alloc"'": {"  >>AccountAddress.txt
-			echo  '"'$nodeAccountAddress'": {' >>AccountAddress.txt
-			echo '"balance": "1000000000000000000000000000"' >>AccountAddress.txt
-			echo "}," >>AccountAddress.txt
-
+			echo "{" > tempAccountAddress.txt
+            echo ""'"alloc"'": {"  >> tempAccountAddress.txt
+			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
+			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
+			echo "}," >> tempAccountAddress.txt
 		elif [ $i -lt $max ] ;then
-			echo  '"'$nodeAccountAddress'": {' >>AccountAddress.txt
-			echo '"balance": "1000000000000000000000000000"' >>AccountAddress.txt
-			echo "}," >>AccountAddress.txt
+			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
+			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
+			echo "}," >> tempAccountAddress.txt
 		fi
-		sed '$ s/.$/},/' AccountAddress.txt >accountAddress.txt
-                 
+
+		sed '$ s/.$/},/' tempAccountAddress.txt > accountAddress.txt          
 	fi 
 
+    rm tempAccountAddress.txt
 }
 
-function cleanup(){
-
-    rm -rf ${pName}/datadir
-    rm -rf ${pName}/keys
-    rm -rf ${pName}/setup
-    rm accountAddress.txt
-    rm AccountAddress.txt
-    rm enode.txt
-    rm nodekey
-    rm Enode.txt
-    rm Address.txt
+function cleanup() {
+    echo "CLEANUP"
 }
+#     rm -rf ${pName}/datadir
+#     rm -rf ${pName}/keys
+#     rm -rf ${pName}/setup
+#     rm accountAddress.txt
+#     rm AccountAddress.txt
+#     rm enode.txt
+#     rm nodekey
+#     rm Enode.txt
+#     rm Address.txt
+# }
 
-function generateEnode(){
-
+function generateEnode() {
     echo ""
     echo "Generating Enodes...." 
+    touch enode.txt
     i=0
     j=0
 
     while [ $i -lt $max ]
     do
-  
         bootnode -genkey nodekey
     	nodekey=$(cat nodekey)
-	bootnode -nodekey nodekey 2>enode.txt &
-	pid=$!
-	sleep 5
-	kill -9 $pid
-	wait $pid 2> /dev/null
-	re="enode:.*@"
-	enode=$(cat enode.txt)
+    	bootnode -nodekey nodekey 2>enode.txt &
+    	pid=$!
+    	sleep 5
+    	kill -9 $pid
+    	wait $pid 2> /dev/null
+    	re="enode:.*@"
+    	enode=$(cat enode.txt)
     
         if [[ $enode =~ $re ]];then
-
             Enode=${BASH_REMATCH[0]};
-        
         fi
 
         chown -R $username:$username .
@@ -239,7 +216,6 @@ function generateEnode(){
         
         cp nodekey  ${pName}/${nodeName}/qdata/geth/. 
 
-
         PATTERN="s/#docker_ip#/$((j+4))/g"
         chown -R $username:$username .
         cat lib/docker_ip.txt > ${pName}/docker_ip.txt
@@ -247,21 +223,14 @@ function generateEnode(){
 
         LOCAL_NODE_IP=$(cat ${pName}/docker_ip.txt)
     
-
         if [ $max == 1 ] ; then
-
             echo "["  > Enode.txt
             echo ""'"'""$Enode$LOCAL_NODE_IP:"21000?discport=0&raftport=50400"""'"'"""," >> Enode.txt
-
         else
-
             if [ $i == 0 ]; then
-
-	    	echo "["  > Enode.txt
-            	echo ""'"'""$Enode$LOCAL_NODE_IP:"21000?discport=0&raftport=50400"""'"'"""," >> Enode.txt
-
+                echo "["  > Enode.txt
+                echo ""'"'""$Enode$LOCAL_NODE_IP:"21000?discport=0&raftport=50400"""'"'"""," >> Enode.txt
             elif [ $i -lt $max ] ;then
-            
                 true $((raftPort++))
                 echo ""'"'""$Enode$LOCAL_NODE_IP:"21000?discport=0&raftport=50400"""'"'"""," >> Enode.txt
             fi
@@ -280,35 +249,30 @@ function generateEnode(){
         cat Address.txt > ${pName}/${nodeName}/qdata/static-nodes.json
         true $(( i++ ))
     done
-
 }
-function displayPublicAddress(){
 
+function displayPublicAddress() {
     i=$max
     
     if [ $i -ge 1 ]; then
-    
         echo "Please use following public address for private transactions between nodes"
         echo "--------------------------------------------------------------------------"
         j=0
     
         while [ $j -lt $i ]
         do
-            
             eval "a=${pName}[${j}]"
             echo ${!a} $(cat $pName/keys/${!a}.pub)
             let "j++"
         done
+
         echo "--------------------------------------------------------------------------"
     else
         echo "No nodes were created"
-
     fi
-    
 }
 
-function main(){
-
+function main() {
     count=0;
 
     chown -R $username:$username .
@@ -324,11 +288,10 @@ function main(){
     i=0
     
     read -p $'\e[1;32mPlease enter a node count: \e[0m' count
-
     max=$count
+
     while [ $i -lt $max ]
     do
-    
         read -p $'\e[1;32mPlease enter node name: \e[0m' ${pName}[${i}] 
         eval "nodeName=${pName}[${i}]"
         nodes[i]=${!nodeName}

@@ -77,14 +77,16 @@ Current `static-nodes.json` looks like this:
 
 8. Override `static-nodes.json` in `KIM2` and `KIM3` with the current version.
 
-9. Run docker-compose again:
+9. In all 3 directories - KIM1, KIM2, KIM3 - create empty file with the name `passwords`.
+
+10. Run docker-compose again:
 ```
 docker-compose --verbose up --force-recreate
 ```
 
 ![Ready to go!](/Images/img5.png "Ready to go!")
 
-10. To test the network simply run:
+11. To test the network simply run:
 ```
 curl -X POST --data '{"jsonrpc":"2.0","method":"web3_clientVersion","params":[],"id":1}' 127.0.0.1:22000
 ```

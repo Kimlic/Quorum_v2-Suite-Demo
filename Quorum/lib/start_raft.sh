@@ -5,7 +5,7 @@ sleep 5
 CORE_NODE_IP="$(dig +short $CORE_NODE_IP)"
 CORE_MASTERNODE_IP="$(dig +short $CORE_MASTERNODE_IP)"
 
-GLOBAL_ARGS="--raft --nodiscover --rpc --rpcaddr 0.0.0.0 --verbosity 6 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum"
+GLOBAL_ARGS="--raft --nodiscover --networkid 10 --rpc --rpcaddr 0.0.0.0 --rpcapi admin,db,eth,debug,miner,net,shh,txpool,personal,web3,quorum,raft --emitcheckpoints"
 
 cp qdata/#nodeName#.conf .
 
@@ -27,7 +27,7 @@ cat /qdata/geth/nodekey
 fi
 
 echo "[*] Starting Quorum on #nodeName#"
-PRIVATE_CONFIG=#nodeName#.conf geth --datadir qdata $GLOBAL_ARGS --rpcport 22000 --port 21000 2>qdata/logs/#nodeName#.log &
+PRIVATE_CONFIG=#nodeName#.conf geth --datadir qdata $GLOBAL_ARGS --verbosity 6 --raftport 50400 --rpcport 22000 --port 21000 --unlock 0 --password passwords 2>qdata/logs/#nodeName#.log &
 
 echo "[*] Started Quorum on #nodeName#"
 
