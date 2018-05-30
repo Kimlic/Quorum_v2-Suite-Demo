@@ -37,6 +37,7 @@ cd kimlic && docker-compose --verbose up --force-recreate
 ```
 
 5. You're ready to go!
+
 ![Ready to go!](/Images/img5.png "Ready to go!")
 
 6. To test the network simply run:
