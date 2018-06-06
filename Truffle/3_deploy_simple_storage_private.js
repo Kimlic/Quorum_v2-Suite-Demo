@@ -5,5 +5,5 @@ module.exports = function(deployer) {
   // Private contract between Node#1 and Node#2. 
   // PrivateFor contains Node#2 (KIM2) address, should be migrated via Node#1 (KIM1)
   // Check the value from all 3 nodes, the 3-rd node should not see contract's state.
-  deployer.deploy(SimpleStoragePrivate, 42, { privateFor: ["IIzhLkVkvw9RBviIAWtYwSRDoPj6EMg62XYCmngw21E="]})
+  deployer.deploy(SimpleStoragePrivate, 42, { privateFor: ["noT+XuM1o4YqB+Mk48yLJ8hER61WXbmb9nCqJLMNCzA="]})
 };

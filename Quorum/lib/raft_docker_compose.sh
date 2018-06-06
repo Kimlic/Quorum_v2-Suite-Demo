@@ -152,8 +152,13 @@ function createGenesis() {
 			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
 			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
 			echo "}," >> tempAccountAddress.txt
-            cat tempAccountAddress.txt >> accountAddress.txt 
-		elif [ $i -lt $max ] ;then
+
+            if [ $max == 1 ]; then
+                sed '$ s/.$/},/' tempAccountAddress.txt >> accountAddress.txt 
+            else
+                cat tempAccountAddress.txt >> accountAddress.txt 
+            fi
+		elif [ $i -lt $max ]; then
 			echo  '"'$nodeAccountAddress'": {' >> tempAccountAddress.txt
 			echo '"balance": "1000000000000000000000000000"' >> tempAccountAddress.txt
             echo "}," >> tempAccountAddress.txt
