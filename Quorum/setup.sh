@@ -42,7 +42,7 @@ function main(){
 
     init
 
-    docker run -it -v $(pwd)/$line:/${PWD##*/}  -w /${PWD##*/} quorum-2.0.2:latest lib/setup.sh
+    docker run -it -v $(pwd)/$line:/${PWD##*/}  -w /${PWD##*/} kimlictr/quorum:latest lib/setup.sh
 }
 
 main
