@@ -1,6 +1,6 @@
   #nodeName#:
     container_name: #nodeName#
-    image: syneblock/quorum-maker:2.0.2
+    image: quorum-2.0.2:latest
     environment:
       - CORE_#nodeName#_NETWORKID=#nodeName#
       - CORE_NODE_IP=#nodeName#
