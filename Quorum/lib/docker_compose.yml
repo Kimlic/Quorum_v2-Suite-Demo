@@ -1,6 +1,6 @@
   #nodeName#:
     container_name: #nodeName#
-    image: quorum-2.0.2:latest
+    image: kimlictr/quorum:latest
     environment:
       - CORE_#nodeName#_NETWORKID=#nodeName#
       - CORE_NODE_IP=#nodeName#
