@@ -1,10 +1,10 @@
 FROM ubuntu:16.04 as builder
 
-MAINTAINER Pharos Production Inc.
+LABEL "company"="Pharos Production Inc."
+LABEL version="1.1"
 
 ENV LANG=C.UTF-8 \
   REFRESHED_AT=2017-06-07-1
-
 WORKDIR /work
 
 RUN apt-get update && \
@@ -48,7 +48,8 @@ RUN git clone https://github.com/Kimlic/quorum.git && \
 
 FROM ubuntu:16.04
 
-MAINTAINER Pharos Production Inc.
+LABEL "company"="Pharos Production Inc."
+LABEL version="1.1"
 
 ENV LANG=C.UTF-8 \
   REFRESHED_AT=2017-06-07-2
