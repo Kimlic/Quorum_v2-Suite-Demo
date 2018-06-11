@@ -53,7 +53,7 @@ The response should be:
 
 # How to prepare Quorum for redeploy
 
-1. Type `docker ps` in terminal to find quorum-related containers.
+1. Type `docker container ls` in terminal to find quorum-related containers.
 
 ![Find docker containers](/Images/img7.png "Quorum containers")
 
