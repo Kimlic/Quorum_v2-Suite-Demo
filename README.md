@@ -57,14 +57,14 @@ The response should be:
 
 ![Find docker containers](/Images/img7.png "Quorum containers")
 
-2. Stop them by sending their Container IDs to `docker stop`
+2. Stop them by sending their Container IDs to `docker container stop`
 ```
-docker stop e5f473235a6f e79e7e1bf367 7b90a7b87bd2
+container stop 6225f184b6f8 fa23e17dae15 0b577683b4ae
 ```
 
-3. Remove containers by sending same IDs to `docker rm`
+3. Remove containers by sending same IDs to `docker container rm`
 ```
-docker rm e5f473235a6f e79e7e1bf367 7b90a7b87bd2
+docker container rm 6225f184b6f8 fa23e17dae15 0b577683b4ae
 ```
 
 4. Delete kimlic directory from Quorum directory, so there is only lib directory and setup.sh are left
