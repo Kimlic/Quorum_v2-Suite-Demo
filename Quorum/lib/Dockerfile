@@ -20,14 +20,15 @@ RUN apt-get update && \
             wget \
             wrk \
             xz-utils \
-            dnsutils
+            dnsutils \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN wget -q https://github.com/jpmorganchase/constellation/releases/download/v0.3.2/constellation-0.3.2-ubuntu1604.tar.xz && \
     tar xvf constellation-0.3.2-ubuntu1604.tar.xz && \
     mv constellation-0.3.2-ubuntu1604 ubuntu1604 && \
     cp ubuntu1604/constellation-node /usr/local/bin && \
     chmod 0755 /usr/local/bin/constellation-node && \
-    rm -rf constellation-0.3.2-ubuntu1604.tar.xz ubuntu1604
+    rm -rf constellation-0.3.2-ubuntu1604.tar.xz ubuntu1604    
 
 ENV GOREL go1.10.2.linux-amd64.tar.gz
 ENV PATH $PATH:/usr/local/go/bin
@@ -37,19 +38,13 @@ RUN wget -q https://storage.googleapis.com/golang/$GOREL && \
     mv go /usr/local/go && \
     rm -f $GOREL
 
-RUN git clone https://github.com/jpmorganchase/quorum.git && \
+RUN git clone https://github.com/Kimlic/quorum.git && \
     cd quorum && \
     make all && \
     cp build/bin/geth /usr/local/bin && \
     cp build/bin/bootnode /usr/local/bin && \
     cd .. && \
     rm -rf quorum
-
-# COPY ./qourum.conf /templates/tm.conf
-# COPY ./start_raft.sh /scripts/start-node.sh
-# RUN chmod +x /scripts/start-node.sh
-
-### Create the runtime image, leaving most of the cruft behind (hopefully...)
 
 FROM ubuntu:16.04
 
@@ -81,9 +76,5 @@ COPY --from=builder \
         /usr/local/bin/geth \
         /usr/local/bin/bootnode \
         /usr/local/bin/
-
-# COPY ./KIM1.conf /templates/tm.conf
-# COPY ./start_node.sh /scripts/start-node.sh
-# RUN chmod +x /scripts/start-node.sh
 
 CMD ["/bin/sh"]

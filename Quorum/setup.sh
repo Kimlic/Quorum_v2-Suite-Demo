@@ -21,6 +21,8 @@ function installDocker(){
     sudo apt-get update
 
     sudo apt-get install docker-ce
+
+    sudo usermod -a -G docker $USER
     
     curl -o /usr/local/bin/docker-compose -L \
          "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m)"
@@ -36,7 +38,6 @@ function init(){
         installDocker
     fi
 }
-
 
 function main(){
 

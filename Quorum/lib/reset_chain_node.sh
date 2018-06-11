@@ -1,7 +1,4 @@
 #!/bin/bash
-
-
-
 function cleanDirectories(){
 
     echo "Cleaning directories"
@@ -16,7 +13,6 @@ function cleanDirectories(){
     mv keystore qdata/        
 
     cp genesis.json .
-    # geth --datadir qdata init genesis.json
     mkdir qdata/geth
     cp nodekey qdata/geth/
     cp *.conf qdata
