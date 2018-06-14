@@ -19,7 +19,6 @@ RUN apt-get update && \
             sysvbanner=1.0.15 \
             wget=1.17.1-1ubuntu1.4 \
             wrk=4.0.1-2 \
-           # xz-utils=5.1.1alpha+20120614-2ubuntu2 \
             dnsutils=1:9.10.3.dfsg.P4-8ubuntu1.10 \
     && rm -rf /var/lib/apt/lists/*
 
@@ -68,8 +67,10 @@ RUN apt-get update && \
         ca-certificates=20170717~16.04.1 \
         curl=7.47.0-1ubuntu2.8 \
         solc=1:0.4.24-0ubuntu1~xenial \
-        dnsutils=1:9.10.3.dfsg.P4-8ubuntu1.10 && \
-    rm -rf /var/lib/apt/lists/*
+        dnsutils=1:9.10.3.dfsg.P4-8ubuntu1.10 \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin \\
+    &&  echo "" > /var/log/dpkg.log && echo "" > /var/log/last.log && echo "" > /var/log/bootstrap.log
 
 RUN mkdir -p /templates && mkdir -p /scripts
 COPY --from=builder \
@@ -77,5 +78,3 @@ COPY --from=builder \
         /usr/local/bin/geth \
         /usr/local/bin/bootnode \
         /usr/local/bin/
-
-CMD ["/bin/sh"]
