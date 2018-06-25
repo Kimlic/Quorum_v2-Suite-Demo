@@ -13,5 +13,5 @@
       - #nodeport#:22000
     networks:
       vpcbr:
-        ipv4_address: 10.50.0.#docker_ip#
+        ipv4_address: 10.0.0.#docker_ip#
 
