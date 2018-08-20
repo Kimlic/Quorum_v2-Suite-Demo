@@ -4,7 +4,7 @@ LABEL "company"="Pharos Production Inc."
 LABEL version="1.1"
 
 ENV LANG=C.UTF-8 \
-  REFRESHED_AT=2017-06-07-1
+  REFRESHED_AT=2018-20-08-1
 WORKDIR /work
 
 RUN apt-get update && \

@@ -43,7 +43,7 @@ function main(){
 
     init
 
-    docker run -it -v $(pwd)/$line:/${PWD##*/}  -w /${PWD##*/} kimlictr/quorum:latest lib/setup.sh
+    docker run -it -v $(pwd)/$line:/${PWD##*/}  -w /${PWD##*/} "kimlictr/quorum-kimlic:latest" lib/setup.sh
 }
 
 main
